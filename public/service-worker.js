@@ -6,15 +6,17 @@ const urlsToCache = ["/", "/offline", "/manifest.json"];
  * Install Service Worker
  */
 self.addEventListener("install", (event) => {
-  console.log("Service Worker installing...");
-
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache);
+    caches.open(CACHE_NAME).then(async (cache) => {
+      for (const url of urlsToCache) {
+        try {
+          await cache.add(url);
+        } catch (e) {
+          console.warn("Cache failed:", url);
+        }
+      }
     }),
   );
-
-  self.skipWaiting();
 });
 
 /**
